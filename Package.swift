@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package(
     name: "Clojure",
     platforms: [
-            // Add support for all platforms starting from a specific version.
             .macOS(.v10_15),
             .iOS(.v11),
+        
             .watchOS(.v5),
             .tvOS(.v11)
         ],

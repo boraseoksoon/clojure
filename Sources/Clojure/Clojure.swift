@@ -1,3 +1,5 @@
 struct Clojure {
-    var text = "Hello, World!"
+    func Take() {
+        print("Take!")
+    }
 }

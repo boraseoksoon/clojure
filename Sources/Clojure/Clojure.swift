@@ -1,17 +1,17 @@
 struct Clojure {
-    func Take() {
+    public func Take() {
         print("Take!")
     }
     
-    func Yeah() {
+    public func Yeah() {
         Take()
     }
     
-    var a = 1
-    var isGood = false
+    public var a = 1
+    public var isGood = false
 }
 
-func FN() {
+public func FN() {
     print("MyFN!")
 }
 

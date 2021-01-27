@@ -1,3 +1,3 @@
 # Clojure
 
-A description of this package.
+Swift collections of function that implement Clojure Standard Library

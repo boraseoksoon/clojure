@@ -1,12 +1,14 @@
 //
 //  Clojure.swift
-//  Swift functions that implements Clojure standard library
+//  Clojure
 //
-//  Created by Seoksoon Jang on 2020/01/05.
+//  Created by Seoksun Jang on 2021/01/26.
 //  Copyright © 2021 LambdaDog. All rights reserved.
 //
 
 import Foundation
+
+public typealias ClosedRangeGeneratorTuple = (AnySequence<Int>, ClosedRange<Int>)
 
 public func Map<T>(_ seq: [T], closure: (T) -> Any) -> [Any] {
     seq.map(closure)
@@ -22,28 +24,37 @@ public func Reduce<T>(from initialValue: T,
     try! sequence.reduce(initialValue, closure)
 }
 
-public func Take<T>(_ count: Int,
-                    _ sequence: Array<T>) -> Array<T>.SubSequence where T: Any {
-    sequence[0..<count]
+public func Cycle(_ range: ClosedRangeGeneratorTuple) -> AnySequence<Int> {
+    return MakeRangeGeneratorTuple(range.1, isCycle: true).0
 }
 
-// Clojure => (map (fn [i] (str i "!\n")) (range 0 10))
-//let res = Map(Array((0...10))) { String($0) + "\n!" }
-//res
+public func Take(_ upto: Int, _ range: Any) -> Array<Int> {
+    if let range = range as? ClosedRangeGeneratorTuple {
+        let tuple = range
+        
+        let generator = tuple.0
+        let range = tuple.1
+        
+        let lowerBound = range.lowerBound
+        let upperBound = range.upperBound
 
-// Clojure => (filter (fn [item] (= (mod item 2) 0)) (range 0 10))
-// => (0 2 4 6 8 10)
-//let res2 = Filter(Array((0...10))) { $0.isMultiple(of: 2) }
-//res2
-// => [0, 2, 4, 6, 8, 10]
+        let sum = abs(lowerBound) + abs(upperBound)
+        if upto <= sum {
+            return Array(generator.lazy.prefix(upto))
+        } else {
+            return Array(generator.lazy.prefix(sum))
+        }
+    } else {
+        if let generator = range as? AnySequence<Int> {
+            let iterator = generator.makeIterator()
+            return Array((0...upto).map { _ in iterator.next() ?? 0 }.lazy.prefix(upto))
+        } else {
+            return []
+        }
+    }
+}
 
-// Clojure => (reduce + (range 0 10))
-// => 45
-//let res3 = Reduce(from: 0, sequence: Array((0...10))) { $0 + $1 }
-// => 55
+public func Range(_ lowerBound: Int, _ upperBound: Int) -> ClosedRangeGeneratorTuple {
+    MakeRangeGeneratorTuple(lowerBound...upperBound)
+}
 
-// Clojure => (take 3 (range 0 10))
-// (0 1 2)
-//let res4 = Take(3, Array(0...10))
-//res4
-// => [0,1,2]

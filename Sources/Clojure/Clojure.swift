@@ -58,3 +58,40 @@ public func Range(_ lowerBound: Int, _ upperBound: Int) -> ClosedRangeGeneratorT
     MakeRangeGeneratorTuple(lowerBound...upperBound)
 }
 
+// (for [x (range 0 10)] x)
+// return lazy sequence
+// (0 1 2 3 4 5 6 7 8 9)
+
+// For((Range 0 10)).forEach { print(x) }
+public func For<T>(range: ClosedRangeGeneratorTuple) -> AnySequence<T> {
+    Generate(range.lowerBound...range.upperBound, isCycle: false)
+}
+
+// while doseq is for executing side-effects and returns nil.
+// (doseq [x (range 0 10) (prn x))
+//0
+//1
+//2
+//3
+//4
+//5
+//6
+//7
+//8
+//9
+//nil
+
+    // (doseq [x (range 0 10) x)
+// nil
+public func DoseQ(range: ClosedRangeGeneratorTuple) -> Void {
+
+}
+
+public func prn(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+    #if DEBUG
+    items.forEach {
+        Swift.print($0, separator: separator, terminator: terminator)
+    }
+    #endif
+}
+
